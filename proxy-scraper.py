@@ -8,25 +8,69 @@
 '''
 ####### #######
 ####### ##########
+import time
+import datetime
 import urllib, urllib2
-import time, datetime
-import threading, Queue
+import threading
+import Queue
 import re
-import StringIO, gzip
+import StringIO
+import gzip
 import sys
 
 
 def queueThread():
 	global proxyCount
 	ts = time.time()
+
 	thedate = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
-	print "Saving to proxylist-" + thedate + ".txt"
+
+    print "Saving to proxylist-" + thedate + ".txt"
 	fout = open("proxylist-" + thedate + ".txt", "w")
 
 	while not workerQueue.empty():
 		fout.write(workerQueue.get() + "\n")
 		proxyCount+=1
-	fout.close()
+
+    fout.close()
+
+
+
+def usproxy():
+	print "Grabbing: http://www.us-proxy.org/"
+	templs = []
+	url = "http://www.us-proxy.org/"
+	try:
+		opener = urllib2.build_opener()
+		opener.addheaders = [('Host', 'www.proxylisty.com'),
+							('Connection', 'keep-alive'),
+							('Cache-Control', 'max-age=0'),
+							('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'),
+							('Upgrade-Insecure-Requests', '1'),
+							('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'),
+							('Referer', 'https://www.google.co.za/'),
+							('Accept-Encoding','gzip, deflate, sdch'),
+							('Accept-Language','en-US,en;q=0.8')]
+
+		response = opener.open(url, timeout=10)
+		html = response.read()
+
+		templs = re.findall(r'<tr><td>(.*?)</td><td>', html)
+		templs2 = re.findall(r'</td><td>[1-99999].*?</td><td>', html)
+
+		for i in range(len(templs)):
+			temp = templs[i] + ":" + templs2[i].replace('</td><td>', '')
+			workerQueue.put(temp)
+			# ("usproxy() " + templs[i] + ":" + templs2[i].replace('</td><td>', ''))
+
+	except Exception, e:
+		if e.message == " ":
+			print ''
+		else:
+			print e.message
+			print "Failed to grab " + "'" + url + "'"
+
+
 
 def proxylist():
 	print "Grabbing: http://proxy-list.org/"
@@ -68,72 +112,6 @@ def proxylist():
 				print "Failed to grab " + "'" + url + "'"
 
 
-def usproxy():
-	print "Grabbing: http://www.us-proxy.org/"
-	templs = []
-	url = "http://www.us-proxy.org/"
-	try:
-		opener = urllib2.build_opener()
-		opener.addheaders = [('Host', 'www.proxylisty.com'),
-							('Connection', 'keep-alive'),
-							('Cache-Control', 'max-age=0'),
-							('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'),
-							('Upgrade-Insecure-Requests', '1'),
-							('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'),
-							('Referer', 'https://www.google.co.za/'),
-							('Accept-Encoding','gzip, deflate, sdch'),
-							('Accept-Language','en-US,en;q=0.8')]
-
-		response = opener.open(url, timeout=10)
-		html = response.read()
-
-		templs = re.findall(r'<tr><td>(.*?)</td><td>', html)
-		templs2 = re.findall(r'</td><td>[1-99999].*?</td><td>', html)
-
-		for i in range(len(templs)):
-			temp = templs[i] + ":" + templs2[i].replace('</td><td>', '')
-			workerQueue.put(temp)
-			# ("usproxy() " + templs[i] + ":" + templs2[i].replace('</td><td>', ''))
-
-	except Exception, e:
-		if e.message == " ":
-			print ''
-		else:
-			print e.message
-			print "Failed to grab " + "'" + url + "'"
-
-
-def freeproxylist():
-	print "Grabbing: http://free-proxy-list.net/"
-	url = "http://free-proxy-list.net/"
-	try:
-		opener = urllib2.build_opener()
-		opener.addheaders = [('Host', 'www.proxylisty.com'),
-							('Connection', 'keep-alive'),
-							('Cache-Control', 'max-age=0'),
-							('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'),
-							('Upgrade-Insecure-Requests', '1'),
-							('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'),
-							('Referer', 'https://www.google.co.za/'),
-							('Accept-Encoding','gzip, deflate, sdch'),
-							('Accept-Language','en-US,en;q=0.8')]
-
-		response = opener.open(url, timeout=10)
-		html = response.read()
-
-		templs = re.findall(r'<tr><td>(.*?)</td><td>', html)
-		templs2 = re.findall(r'</td><td>[1-99999].*?</td><td>', html)
-
-		for i in range(len(templs)):
-			workerQueue.put(templs[i] + ":" + templs2[i].replace('</td><td>', ''))
-			# bug("freeproxylist() " + templs[i] + ":" + templs2[i].replace('</td><td>', ''))
-
-	except Exception, e:
-		if e.message == " ":
-			print ''
-		else:
-			print e.message
-			print "Failed to grab " + "'" + url + "'"
 
 
 def coolproxy():
@@ -179,6 +157,40 @@ def coolproxy():
 			else:
 				print e.message
 				print "Failed to grab " + "'" + url + "'"
+
+
+def freeproxylist():
+	print "Grabbing: http://free-proxy-list.net/"
+	url = "http://free-proxy-list.net/"
+	try:
+		opener = urllib2.build_opener()
+		opener.addheaders = [('Host', 'www.proxylisty.com'),
+							('Connection', 'keep-alive'),
+							('Cache-Control', 'max-age=0'),
+							('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'),
+							('Upgrade-Insecure-Requests', '1'),
+							('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'),
+							('Referer', 'https://www.google.co.za/'),
+							('Accept-Encoding','gzip, deflate, sdch'),
+							('Accept-Language','en-US,en;q=0.8')]
+
+		response = opener.open(url, timeout=10)
+		html = response.read()
+
+		templs = re.findall(r'<tr><td>(.*?)</td><td>', html)
+		templs2 = re.findall(r'</td><td>[1-99999].*?</td><td>', html)
+
+		for i in range(len(templs)):
+			workerQueue.put(templs[i] + ":" + templs2[i].replace('</td><td>', ''))
+			# bug("freeproxylist() " + templs[i] + ":" + templs2[i].replace('</td><td>', ''))
+
+	except Exception, e:
+		if e.message == " ":
+			print ''
+		else:
+			print e.message
+			print "Failed to grab " + "'" + url + "'"
+
 
 
 def samair():
@@ -340,57 +352,61 @@ def aliveproxy():
 			workerQueue.put(itm[0] + ":" + itm[1])
 
 
+#============================================================================================
+
+
 if __name__ == "__main__":
 
 	print "Starting Proxy Scraper...\n"
 
 	proxyCount = 0
+
 	workerQueue = Queue.Queue()
-	tQueueThread = threading.Thread(target=queueThread)
-	tQueueThread.setDaemon(True)
 
+    pQueueThread = threading.Thread(target=queueThread)
+	pQueueThread.setDaemon(True)
 
-	tProxylist = threading.Thread(target=proxylist)
-	tProxylist.setDaemon(True)
+	pProxylist = threading.Thread(target=proxylist)
+	pProxylist.setDaemon(True)
 
-	tUsproxy = threading.Thread(target=usproxy)
-	tUsproxy.setDaemon(True)
+	pUsproxy = threading.Thread(target=usproxy)
+	pUsproxy.setDaemon(True)
 
-	tFreeproxylist = threading.Thread(target=freeproxylist)
-	tFreeproxylist.setDaemon(True)
+	pFreeproxylist = threading.Thread(target=freeproxylist)
+	pFreeproxylist.setDaemon(True)
 
-	tCoolproxy = threading.Thread(target=coolproxy)
-	tCoolproxy.setDaemon(True)
+	pCoolproxy = threading.Thread(target=coolproxy)
+	pCoolproxy.setDaemon(True)
 
-	tSamair = threading.Thread(target=samair)
-	tSamair.setDaemon(True)
+	pSamair = threading.Thread(target=samair)
+	pSamair.setDaemon(True)
 
 	#tProxylisty = threading.Thread(target=proxylisty)
 	#tProxylisty.setDaemon(True)
 
-	tNntime = threading.Thread(target=nntime)
-	tNntime.setDaemon(True)
+	pAliveproxy = threading.Thread(target=aliveproxy)
+	pAliveproxy.setDaemon(True)
 
-	tAliveproxy = threading.Thread(target=aliveproxy)
-	tAliveproxy.setDaemon(True)
+    pNntime = threading.Thread(target=nntime)
+	pNntime.setDaemon(True)
 
-	tProxylist.start()
-
-	time.sleep(1)
-
-	tUsproxy.start()
+	#pProxylist.start()
 
 	time.sleep(1)
 
-	tFreeproxylist.start()
+	pUsproxy.start()
 
 	time.sleep(1)
 
-	tCoolproxy.start()
+	pFreeproxylist.start()
 
 	time.sleep(1)
 
-	tSamair.start()
+	pCoolproxy.start()
+
+	time.sleep(1)
+
+	pSamair.start()
 
 	time.sleep(1)
 
@@ -398,30 +414,35 @@ if __name__ == "__main__":
 
 	time.sleep(1)
 
-	tNntime.start()
+	pNntime.start()
 
 	time.sleep(1)
 
-	tAliveproxy.start()
+	pAliveproxy.start()
 
 	time.sleep(2)
 	print "\nPlease wait..."
 
-	tProxylist.join()
-	tUsproxy.join()
-	tFreeproxylist.join()
-	tCoolproxy.join()
-	tSamair.join()
+    print "\n If it takes too long, try pressing enter, it may trigger the program to finish."
+
+    pProxylist.join()
+	pUsproxy.join()
+	pFreeproxylist.join()
+	pCoolproxy.join()
+	pSamair.join()
 	#tProxylisty.join()
-	tNntime.join()
-	tAliveproxy.join()
+    pAliveproxy.join()
+	pNntime.join()
+
 
 	if not workerQueue.empty():
-		tQueueThread.start()
-		tQueueThread.join()
+
+    	pQueueThread.start()
+		pQueueThread.join()
 		print "Saved to file!\n"
 		print "Proxies found: " + str(proxyCount)
-	else:
+
+    else:
 		print "Could not scrape any proxies!"
 
 
@@ -429,4 +450,4 @@ if __name__ == "__main__":
 
 	sys.exit()
 
-print "Finish"
+print "Finish!"
