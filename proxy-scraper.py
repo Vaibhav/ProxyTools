@@ -22,17 +22,13 @@ import sys
 def queueThread():
 	global proxyCount
 	ts = time.time()
-
 	thedate = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S')
-
-    print "Saving to proxylist-" + thedate + ".txt"
+	print ("Saving to proxylist-" + thedate + ".txt")
 	fout = open("proxylist-" + thedate + ".txt", "w")
-
 	while not workerQueue.empty():
 		fout.write(workerQueue.get() + "\n")
 		proxyCount+=1
-
-    fout.close()
+	fout.close()
 
 
 
@@ -279,7 +275,7 @@ def proxylisty():
 				print "Failed to grab " + "'" + url + "'"
 
 def nntime():
-	print "Grabbing: http://nntime.com/"
+	print "\nGrabbing: http://nntime.com/"
 	primary_url = "http://nntime.com/proxy-list-00.htm"
 	urls = []
 	for i in range(1, 31):
@@ -330,7 +326,7 @@ def nntime():
 				print "Failed to grab " + "'" + url + "'"
 
 def aliveproxy():
-	print "Grabbing: http://www.aliveproxy.com/"
+	print "\nGrabbing: http://www.aliveproxy.com/"
 	urls = []
 
 	url = "http://www.aliveproxy.com/"
@@ -363,7 +359,7 @@ if __name__ == "__main__":
 
 	workerQueue = Queue.Queue()
 
-    pQueueThread = threading.Thread(target=queueThread)
+	pQueueThread = threading.Thread(target=queueThread)
 	pQueueThread.setDaemon(True)
 
 	pProxylist = threading.Thread(target=proxylist)
@@ -387,62 +383,60 @@ if __name__ == "__main__":
 	pAliveproxy = threading.Thread(target=aliveproxy)
 	pAliveproxy.setDaemon(True)
 
-    pNntime = threading.Thread(target=nntime)
+	pNntime = threading.Thread(target=nntime)
 	pNntime.setDaemon(True)
 
-	#pProxylist.start()
+	pProxylist.start()
 
-	time.sleep(1)
+	time.sleep(2)
 
 	pUsproxy.start()
 
-	time.sleep(1)
+	time.sleep(2)
 
 	pFreeproxylist.start()
 
-	time.sleep(1)
+	time.sleep(2)
 
 	pCoolproxy.start()
 
-	time.sleep(1)
+	time.sleep(2)
 
 	pSamair.start()
 
-	time.sleep(1)
+	time.sleep(2)
 
-	#tProxylisty.start()
+	#pProxylisty.start()
 
-	time.sleep(1)
+	#time.sleep(2)
+
+	pAliveproxy.start()
 
 	pNntime.start()
 
-	time.sleep(1)
-
-	pAliveproxy.start()
+	time.sleep(2)
 
 	time.sleep(2)
 	print "\nPlease wait..."
 
-    print "\n If it takes too long, try pressing enter, it may trigger the program to finish."
+	print "\nIf it takes too long, try pressing enter, it may trigger the program to finish."
 
-    pProxylist.join()
+	pProxylist.join()
 	pUsproxy.join()
 	pFreeproxylist.join()
 	pCoolproxy.join()
 	pSamair.join()
-	#tProxylisty.join()
-    pAliveproxy.join()
+	#pProxylist.join()
+	pAliveproxy.join()
 	pNntime.join()
 
 
 	if not workerQueue.empty():
-
-    	pQueueThread.start()
+		pQueueThread.start()
 		pQueueThread.join()
 		print "Saved to file!\n"
 		print "Proxies found: " + str(proxyCount)
-
-    else:
+	else:
 		print "Could not scrape any proxies!"
 
 
