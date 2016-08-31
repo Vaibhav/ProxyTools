@@ -2,7 +2,7 @@
 
 This repository contians a long python script which scrapes proxies from the top free proxy websites. 
 
-These websites include:
+These websites are the ones I acrape the proxies from:
  - http://proxy-list.org/
  - http://us-proxy.org/
  - http://free-proxy-list.net/
