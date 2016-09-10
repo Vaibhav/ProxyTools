@@ -19,6 +19,7 @@ One run usually gets around 3000+ fresh proxies.
 
 The script takes a while to compile the list as it has to retrieve the proxy from each of the websites. 
 
+How to run the script:
 
 ```python
 python proxy-scraper.py
@@ -26,6 +27,7 @@ python proxy-scraper.py
 
  
 ## Bugs
+
 
 The "proxylisty" implementation I currently have, does not work properly. 
  
