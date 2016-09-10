@@ -15,9 +15,14 @@ Soon to come:
  - http://www.proxylisty.com/
  
  
-One run usually gets around 3000 fresh proxies. 
+One run usually gets around 3000+ fresh proxies. 
 
 The script takes a while to compile the list as it has to retrieve the proxy from each of the websites. 
+
+
+```python
+python proxy-scraper.py
+```
 
  
 ## Bugs
