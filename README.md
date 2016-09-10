@@ -18,11 +18,15 @@ Soon to come:
 One run usually gets around 3000 fresh proxies. 
 
 The script takes a while to compile the list as it has to retrieve the proxy from each of the websites. 
+
  
 ## Bugs
-
-Some of the output contains html tags along with the proxy address. 
 
 The "proxylisty" implementation I currently have, does not work properly. 
  
 You have to press enter after it says "Please Wait...". It doesn't automatically save the file, it waits for the user to press enter. 
+
+
+### Fixed
+
+FIXED: Some of the output contained HTML tags with the proxy addresses embedded within the tags. Used regex to remove the tags. 

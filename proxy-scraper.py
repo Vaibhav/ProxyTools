@@ -18,6 +18,10 @@ import StringIO
 import gzip
 import sys
 
+def remove_tags(text):
+	"""Remove html tags from a string"""
+	clean = re.compile('<.*?>')
+	return re.sub(clean, '', text)
 
 def queueThread():
 	global proxyCount
@@ -26,10 +30,10 @@ def queueThread():
 	print ("Saving to proxylist-" + thedate + ".txt")
 	fout = open("proxylist-" + thedate + ".txt", "w")
 	while not workerQueue.empty():
-		fout.write(workerQueue.get() + "\n")
+		line = remove_tags(workerQueue.get())
+		fout.write(line + "\n")
 		proxyCount+=1
 	fout.close()
-
 
 
 def usproxy():
