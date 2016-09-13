@@ -159,6 +159,7 @@ def coolproxy():
 				print "Failed to grab " + "'" + url + "'"
 
 
+
 def freeproxylist():
 	print "Grabbing: http://free-proxy-list.net/"
 	url = "http://free-proxy-list.net/"
@@ -381,14 +382,16 @@ if __name__ == "__main__":
 	pSamair = threading.Thread(target=samair)
 	pSamair.setDaemon(True)
 
-	#tProxylisty = threading.Thread(target=proxylisty)
-	#tProxylisty.setDaemon(True)
+	#pProxylisty = threading.Thread(target=proxylisty)
+	#pProxylisty.setDaemon(True)
 
 	pAliveproxy = threading.Thread(target=aliveproxy)
 	pAliveproxy.setDaemon(True)
 
 	pNntime = threading.Thread(target=nntime)
 	pNntime.setDaemon(True)
+
+	print "All threads set, starting threads..."
 
 	pProxylist.start()
 
@@ -411,7 +414,6 @@ if __name__ == "__main__":
 	time.sleep(2)
 
 	#pProxylisty.start()
-
 	#time.sleep(2)
 
 	pAliveproxy.start()
@@ -420,9 +422,8 @@ if __name__ == "__main__":
 
 	time.sleep(2)
 
-	time.sleep(2)
+	print "Fetching data..."
 	print "\nPlease wait..."
-
 	print "\nIf it takes too long, try pressing enter, it may trigger the program to finish."
 
 	pProxylist.join()

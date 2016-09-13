@@ -29,7 +29,7 @@ python proxy-scraper.py
 ## Bugs
 
 
-The "proxylisty" implementation I currently have, does not work properly. 
+The "proxylisty" implementation I currently have, does not work properly. When scraping ProxyListy it keeps outputting "not a gzipped file".  
  
 You have to press enter after it says "Please Wait...". It doesn't automatically save the file, it waits for the user to press enter. 
 
