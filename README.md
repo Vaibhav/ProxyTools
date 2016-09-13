@@ -12,8 +12,7 @@ These websites are the ones I scrape the proxies from:
  - http://nntime.com/
 
 Soon to come:
- - http://www.proxylisty.com/
- 
+ - Proxy Checker, check if the proxies are working and delete proxies that do not. Thus, shortening thel ist of proxies    to include only the best of the best.  
  
 One run usually gets around 3000+ fresh proxies. 
 

@@ -358,8 +358,9 @@ def aliveproxy():
 
 if __name__ == "__main__":
 
-	print "Starting Proxy Scraper...\n"
-
+	print "==========================="
+	print "Starting Proxy Scraper..."
+	print "==========================="
 	proxyCount = 0
 
 	workerQueue = Queue.Queue()
