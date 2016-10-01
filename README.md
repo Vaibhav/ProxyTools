@@ -30,12 +30,13 @@ python proxy-scraper.py
 
 The "proxylisty" implementation I currently have, does not work properly. When scraping ProxyListy it keeps outputting "not a gzipped file".  
  
-You have to press enter after it says "Please Wait...". It doesn't automatically save the file, it waits for the user to press enter. 
+You have to press enter after it says "Please Wait...". It doesn't automatically save the file, it waits for the user to press enter. ---> Somewhat FIXED
 
 
 ### Fixed
 
 FIXED: Some of the output contained HTML tags with the proxy addresses embedded within the tags. Used regex to remove the tags. 
+FIXED: Missing port numbers for some of the proxies due to proxy addresses and ports being in different parts of the document object model. 
 
 #### License
 
