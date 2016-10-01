@@ -36,3 +36,10 @@ You have to press enter after it says "Please Wait...". It doesn't automatically
 ### Fixed
 
 FIXED: Some of the output contained HTML tags with the proxy addresses embedded within the tags. Used regex to remove the tags. 
+
+#### License
+
+
+MIT
+
+**Free Software, Hell Yeah!**
