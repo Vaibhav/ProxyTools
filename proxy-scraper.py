@@ -2,7 +2,7 @@
 ####### #######
 '''
    Date: August 2016
-   Script downloads the best proxies from the best free proxy websites
+   Script downloads the best HTTP proxies from free proxy websites
    Saves a txt file with 1 proxy per line
    This list can easily be used with other bots/programs
 '''
@@ -31,6 +31,11 @@ def queueThread():
 	fout = open("proxylist-" + thedate + ".txt", "w")
 	while not workerQueue.empty():
 		line = remove_tags(workerQueue.get())
+		# if the port number is missing for the proxy
+		# add port 8080 as temporary port
+		# since it is the most popular port. 
+		if line.endswith(':'):
+			line += '8080'
 		fout.write(line + "\n")
 		proxyCount+=1
 	fout.close()
