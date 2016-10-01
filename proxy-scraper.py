@@ -17,6 +17,29 @@ import re
 import StringIO
 import gzip
 import sys
+import socket
+
+socket.setdefaulttimeout(90)
+# Reference https://love-python.blogspot.ca/2008/07/check-status-proxy-address.html
+def is_bad_proxy(currentProxy):    
+    try:
+        proxy_handler = urllib2.ProxyHandler({'http': currentProxy})
+        opener = urllib2.build_opener(proxy_handler)
+        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+        urllib2.install_opener(opener)
+        req = urllib2.Request('http://www.example.com')  # change the URL to test here
+        sock = urllib2.urlopen(req)
+
+    except urllib2.HTTPError, e:
+        print 'Error code: ', e.code
+        return e.code
+
+    except Exception, detail:
+        print "ERROR:", detail
+        return True
+		
+    return False
+
 
 def remove_tags(text):
 	"""Remove html tags from a string"""
