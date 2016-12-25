@@ -36,6 +36,8 @@ You have to press enter after it says "Please Wait...". It doesn't automatically
 ### Fixed
 
 FIXED: Some of the output contained HTML tags with the proxy addresses embedded within the tags. Used regex to remove the tags. 
+
+
 FIXED: Missing port numbers for some of the proxies due to proxy addresses and ports being in different parts of the document object model. 
 
 #### License
